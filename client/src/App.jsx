@@ -1,31 +1,58 @@
-import {useState, useEffect} from 'react'
+import { useState, useEffect } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
-import {createClient} from '@supabase/supabase-js'
+import { supabase } from './main.jsx'
 
 function App() {
     const [count, setCount] = useState(0)
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(true)
 
-    const supabase = createClient(
-        'https://uioawrrgevzolgdniqwz.supabase.co',
-        import.meta.env.VITE_SUPABASE_KEY
-    )
-
     useEffect(() => {
         async function fetchData() {
             try {
-                const {data, error} = await supabase
+                // Try to query the Test table directly
+                const { data: testData, error: testError } = await supabase
                     .from('Test')
                     .select('*')
 
-                if (error) throw error
-                setData(data)
-                console.log("Fetched data:", data)
+                if (testError) {
+                    console.error("Error querying Test table:", testError)
+                    // Handle table not existing
+                    if (testError.code === '42P01') {
+                        console.log("The Test table doesn't exist. Please create it in the Supabase dashboard.")
+                    }
+                } else {
+                    console.log("Test table data:", testData)
+                    setData(testData)
+
+                    // If table exists but is empty, insert test data
+                    if (testData.length === 0) {
+                        console.log("Test table is empty. Inserting test data...")
+
+                        const { error: insertError } = await supabase
+                            .from('Test')
+                            .insert([
+                                { name: 'Test Item 1', value: 42 },
+                                { name: 'Test Item 2', value: 100 }
+                            ])
+
+                        if (insertError) {
+                            console.error("Error inserting data:", insertError)
+                        } else {
+                            // Fetch the newly inserted data
+                            const { data: newData } = await supabase
+                                .from('Test')
+                                .select('*')
+
+                            setData(newData)
+                            console.log("Inserted test data successfully:", newData)
+                        }
+                    }
+                }
             } catch (error) {
-                console.error('Error fetching data:', error)
+                console.error('Error in data operations:', error.message)
             } finally {
                 setLoading(false)
             }
@@ -34,10 +61,11 @@ function App() {
         fetchData()
     }, [])
 
+
     return (
         <div className="container">
             <div className="header">
-                <a href="https://vite.dev" target="_blank" rel="noreferrer">
+                <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
                     <img src={viteLogo} className="logo" alt="Vite logo"/>
                 </a>
                 <a href="https://react.dev" target="_blank" rel="noreferrer">
@@ -62,7 +90,7 @@ function App() {
                 ) : (
                     <div>
                         {data.length === 0 ? (
-                            <p>No data found</p>
+                            <p>No data found. Make sure you have a 'Test' table in your Supabase project.</p>
                         ) : (
                             <ul>
                                 {data.map((item, index) => (
