@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
-import reactLogo from './assets/react.svg'
+import reactLogo from '../assets/react.svg'
 import viteLogo from '/vite.svg'
-import './App.css'
-import { supabase } from './main.jsx'
+import '../styles/App.css'
+import { supabase } from '../main.jsx'
 
 function App() {
     const [count, setCount] = useState(0)
