@@ -1,9 +1,5 @@
-namespace server.Models;
-
-public class TemperatureReading
+public class TemperatureInput
 {
-    public int Id { get; set; }
-    public string DeviceId { get; set; } = string.Empty;
+    public string DeviceId { get; set; }
     public float Value { get; set; }
-    public DateTime Timestamp { get; set; } = DateTime.UtcNow;
 }
