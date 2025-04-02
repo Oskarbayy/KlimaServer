@@ -1,18 +1,31 @@
 using Microsoft.AspNetCore.Mvc;
+using KlimaServer.Models;
+using KlimaServer.Services;
+
+namespace KlimaServer.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
 public class TemperatureController : ControllerBase
 {
-    [HttpPost]
-    public IActionResult ReceiveTemperature([FromBody] TemperatureInput input)
+    private readonly ITemperatureService _service;
+
+    public TemperatureController(ITemperatureService service)
     {
-        // Just log or respond for now — no DB
-        Console.WriteLine($"Temperature from {input.DeviceId}: {input.Value} °C");
+        _service = service;
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Post([FromBody] TemperatureReading input)
+    {
+        if (string.IsNullOrWhiteSpace(input.DeviceId))
+            return BadRequest("DeviceId is required.");
+
+        await _service.SaveTemperatureAsync(input);
 
         return Ok(new
         {
-            message = "Temperature received",
+            message = "Temperature saved",
             received = input
         });
     }
