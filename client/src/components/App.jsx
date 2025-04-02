@@ -2,63 +2,48 @@ import { useState, useEffect } from 'react'
 import reactLogo from '../assets/react.svg'
 import viteLogo from '/vite.svg'
 import '../styles/App.css'
-import { supabase } from '../main.jsx'
+/**
+ * @typedef {import('@supabase/supabase-js').SupabaseClient} SupabaseClient
+ * @type {SupabaseClient}
+ */
+import { supabase } from '../supabaseClient'
+
 
 function App() {
     const [count, setCount] = useState(0)
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(true)
+    const [errorMessage, setErrorMessage] = useState('')
 
     useEffect(() => {
         async function fetchData() {
             try {
                 // Try to query the Test table directly
                 const { data: testData, error: testError } = await supabase
-                    .from('Test')
+                    .from('arduino_data')
                     .select('*')
 
                 if (testError) {
                     console.error("Error querying Test table:", testError)
-                    // Handle table not existing
-                    if (testError.code === '42P01') {
-                        console.log("The Test table doesn't exist. Please create it in the Supabase dashboard.")
-                    }
+                    setErrorMessage(`Query error: ${testError.message}`)
                 } else {
                     console.log("Test table data:", testData)
                     setData(testData)
-
-                    // If table exists but is empty, insert test data
-                    if (testData.length === 0) {
-                        console.log("Test table is empty. Inserting test data...")
-
-                        const { error: insertError } = await supabase
-                            .from('Test')
-                            .insert([
-                                { name: 'Test Item 1', value: 42 },
-                                { name: 'Test Item 2', value: 100 }
-                            ])
-
-                        if (insertError) {
-                            console.error("Error inserting data:", insertError)
-                        } else {
-                            // Fetch the newly inserted data
-                            const { data: newData } = await supabase
-                                .from('Test')
-                                .select('*')
-
-                            setData(newData)
-                            console.log("Inserted test data successfully:", newData)
-                        }
-                    }
                 }
             } catch (error) {
                 console.error('Error in data operations:', error.message)
+                setErrorMessage(`Operation error: ${error.message}`)
             } finally {
                 setLoading(false)
             }
         }
 
-        fetchData()
+        // Handle the promise returned by fetchData
+        fetchData().catch(error => {
+            console.error("Unhandled error in fetchData:", error);
+            setErrorMessage(`Unhandled error: ${error.message}`);
+            setLoading(false);
+        });
     }, [])
 
 
@@ -84,21 +69,56 @@ function App() {
             </div>
 
             <div className="supabase-data">
-                <h2>Supabase Data</h2>
+                <h2>Arduino Data</h2>
                 {loading ? (
                     <p>Loading data...</p>
                 ) : (
                     <div>
+                        {errorMessage && (
+                            <div className="error-message" style={{color: 'red'}}>
+                                <p>Error: {errorMessage}</p>
+                            </div>
+                        )}
+
                         {data.length === 0 ? (
-                            <p>No data found. Make sure you have a 'Test' table in your Supabase project.</p>
+                            <p>No data found in the Arduino table.</p>
                         ) : (
-                            <ul>
+                            <div className="data-container">
                                 {data.map((item, index) => (
-                                    <li key={item.id || index}>
-                                        <pre>{JSON.stringify(item, null, 2)}</pre>
-                                    </li>
+                                    <div key={item.id || index} className="data-item">
+                                        {Object.entries(item)
+                                            .filter(([key]) => key !== 'id') // Skip the ID field
+                                            .map(([key, value]) => (
+                                                <div key={key} className="data-property">
+                                                    {key.includes('time') || key.includes('date') ? (
+                                                        <span className="property-value">
+                                                            {new Date(value).toLocaleString(undefined, {
+                                                                year: 'numeric',
+                                                                month: 'short',
+                                                                day: 'numeric',
+                                                                hour: '2-digit',
+                                                                minute: '2-digit',
+                                                            })}
+                                                        </span>
+                                                    ) : (
+                                                        <>
+                                                            <span className="property-name">
+                                                                {key.replace(/_/g, ' ').split(' ').map(
+                                                                    word => word.charAt(0).toUpperCase() + word.slice(1)
+                                                                ).join(' ')}: </span> {/* Added space after the colon */}
+                                                            <span className="property-value">
+                                                                {typeof value === 'object' && value !== null
+                                                                    ? 'Complex data'
+                                                                    : String(value)
+                                                                }
+                                                            </span>
+                                                        </>
+                                                    )}
+                                                </div>
+                                            ))}
+                                    </div>
                                 ))}
-                            </ul>
+                            </div>
                         )}
                     </div>
                 )}
