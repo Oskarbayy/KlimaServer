@@ -1,0 +1,14 @@
+[phases.setup]
+nixPkgs = ["dotnet-sdk_6"]
+
+[variables]
+DOTNET_ROOT = "/app/server"
+
+[phases.install]
+cmds = ["dotnet restore ./server/Server.csproj"]
+
+[phases.build]
+cmds = ["dotnet publish ./server/Server.csproj -c Release -o out"]
+
+[start]
+cmd = "./out/server"
