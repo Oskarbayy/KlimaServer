@@ -7,7 +7,9 @@ public class TemperatureController : ControllerBase
     [HttpPost]
     public IActionResult ReceiveTemperature([FromBody] TemperatureInput input)
     {
-        Console.WriteLine($"Temperature from {input.DeviceId}: {input.Value}");
+        // Just log or respond for now — no DB
+        Console.WriteLine($"Temperature from {input.DeviceId}: {input.Value} °C");
+
         return Ok(new
         {
             message = "Temperature received",
