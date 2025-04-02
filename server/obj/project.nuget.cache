@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "KnPfmaffoyA=",
+  "dgSpecHash": "i11O7Yh+ZAk=",
   "success": true,
-  "projectFilePath": "C:\\dev\\VS Code\\KlimaServer\\server\\server.csproj",
+  "projectFilePath": "C:\\dev\\VS Code\\ArduinoVejrWebApp\\server\\server.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\osha\\.nuget\\packages\\microsoft.aspnetcore.openapi\\8.0.7\\microsoft.aspnetcore.openapi.8.0.7.nupkg.sha512",
     "C:\\Users\\osha\\.nuget\\packages\\microsoft.extensions.apidescription.server\\6.0.5\\microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",

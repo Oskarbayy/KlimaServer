@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\dev\\VS Code\\KlimaServer\\server\\server.csproj": {}
+    "C:\\dev\\VS Code\\ArduinoVejrWebApp\\server\\server.csproj": {}
   },
   "projects": {
-    "C:\\dev\\VS Code\\KlimaServer\\server\\server.csproj": {
+    "C:\\dev\\VS Code\\ArduinoVejrWebApp\\server\\server.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\dev\\VS Code\\KlimaServer\\server\\server.csproj",
+        "projectUniqueName": "C:\\dev\\VS Code\\ArduinoVejrWebApp\\server\\server.csproj",
         "projectName": "server",
-        "projectPath": "C:\\dev\\VS Code\\KlimaServer\\server\\server.csproj",
+        "projectPath": "C:\\dev\\VS Code\\ArduinoVejrWebApp\\server\\server.csproj",
         "packagesPath": "C:\\Users\\osha\\.nuget\\packages\\",
-        "outputPath": "C:\\dev\\VS Code\\KlimaServer\\server\\obj\\",
+        "outputPath": "C:\\dev\\VS Code\\ArduinoVejrWebApp\\server\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

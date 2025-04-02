@@ -35,3 +35,6 @@ C:\dev\VS Code\ArduinoVejrWebApp\server\obj\Debug\net8.0\refint\server.dll
 C:\dev\VS Code\ArduinoVejrWebApp\server\obj\Debug\net8.0\server.pdb
 C:\dev\VS Code\ArduinoVejrWebApp\server\obj\Debug\net8.0\server.genruntimeconfig.cache
 C:\dev\VS Code\ArduinoVejrWebApp\server\obj\Debug\net8.0\ref\server.dll
+C:\dev\VS Code\ArduinoVejrWebApp\server\bin\Debug\net8.0\server.staticwebassets.endpoints.json
+C:\dev\VS Code\ArduinoVejrWebApp\server\obj\Debug\net8.0\staticwebassets.build.endpoints.json
+C:\dev\VS Code\ArduinoVejrWebApp\server\obj\Debug\net8.0\staticwebassets\msbuild.server.Microsoft.AspNetCore.StaticWebAssetEndpoints.props
