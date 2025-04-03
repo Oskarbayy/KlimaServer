@@ -60,7 +60,11 @@ app.MapGet("/getCurrentTemperature", () =>
 });
 
 
+<<<<<<< HEAD
+app.MapPost("/recieveTemperature", (TemperatureInput input) =>
+=======
 app.MapPost("/recieveTemperature", async (TemperatureInput input, AppDbContext db) =>
+>>>>>>> test_database_osha
 {
     var entry = new TemperatureEntry
     {
