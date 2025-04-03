@@ -1,6 +1,20 @@
+using Data;
+using Microsoft.EntityFrameworkCore;
 using Models;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Setup database
+// Get connection string from Railway (replace this with your actual one)
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? Environment.GetEnvironmentVariable("DATABASE_URL")
+    ?? throw new Exception("Connection string not set.");
+
+// Register services
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(connectionString));
+
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer(); // Required for minimal APIs
 builder.Services.AddSwaggerGen();           // Registers Swagger generator
@@ -29,19 +43,30 @@ app.MapGet("/getCurrentTemperature", () =>
 });
 
 
-app.MapPost("/recieveTemperature", (Models.TemperatureInput input) =>
+app.MapPost("/recieveTemperature", async (TemperatureInput input, AppDbContext db) =>
 {
-    Console.WriteLine($"Received: {input.Temperature} {input.Unit}");
-    curTemperatureFromArduino = input;
+    var entry = new TemperatureEntry
+    {
+        temperature = input.Temperature,
+        unit = input.Unit
+    };
+
+    await db.TemperatureEntries.AddAsync(entry);
+    await db.SaveChangesAsync();
 
     return Results.Ok(new
     {
         status = "success",
-        received = input
+        saved = entry
     });
 });
 
 
+app.MapGet("/temperatures", async (AppDbContext db) =>
+{
+    var allEntries = await db.TemperatureEntries.ToListAsync();
+    return Results.Ok(allEntries);
+});
 
 // Get the port from the environment variable "PORT".
 var port = Environment.GetEnvironmentVariable("PORT")
