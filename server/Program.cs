@@ -9,7 +9,7 @@ var app = builder.Build();
 TemperatureInput? curTemperatureFromArduino = null;
 
 app.UseSwagger();   // Generates /swagger/v1/swagger.json
-app.UseSwaggerUI(); // Serves Swagger UI at /swagger
+app.UseSwaggerUI(); // Serves Swagger UI at /swaggers
 
 app.MapControllers();
 
