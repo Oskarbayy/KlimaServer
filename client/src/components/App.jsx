@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
-import reactLogo from '../assets/react.svg'
-import viteLogo from '/vite.svg'
 import '../styles/App.css'
+
 /**
  * @typedef {import('@supabase/supabase-js').SupabaseClient} SupabaseClient
  * @type {SupabaseClient}
@@ -10,7 +9,6 @@ import { supabase } from '../supabaseClient'
 
 
 function App() {
-    const [count, setCount] = useState(0)
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(true)
     const [errorMessage, setErrorMessage] = useState('')
@@ -30,6 +28,10 @@ function App() {
                     console.log("Test table data:", testData)
                     setData(testData)
                 }
+
+               getCurrentTemperature();
+               
+
             } catch (error) {
                 console.error('Error in data operations:', error.message)
                 setErrorMessage(`Operation error: ${error.message}`)
@@ -46,30 +48,72 @@ function App() {
         });
     }, [])
 
+     async function getCurrentTemperature() {
+        try{
+            const response = await fetch('https://klimaserver-production.up.railway.app/getCurrentTemperature')
+           
+            if (!response.ok) {
+                throw new Error(`error: ${response.status}`);
+            }
+            const data = await response.json();
+            console.log('Fetched temperature:', data.temperature);
+            return data.temperature;
+        }catch(error) {
+            console.error('Error fetching temperature:', error.message);
+            return null;
+        }
+     }
+
+     function temperaturCheck(value) {
+        
+        const temp = Number(value);
+        switch (true) {
+            case temp <= 5:
+                return<i  className="fa-solid fa-snowflake"></i>;
+            case temp <= 10:
+                return <i className="fa-solid fa-temperature-empty"></i>
+            case temp <= 15:
+                return <i className="fa-solid fa-temperature-quarter"></i>
+            case temp <= 20:
+                return <i className="fa-solid fa-temperature-half"></i>
+            case temp <= 25:
+                return <i className="fa-solid fa-temperature-three-quarters"></i>
+            case temp <= 30:
+                return <i className="fa-solid fa-temperature-full"></i>
+            case temp <= 35:
+                return <i className="fa-solid fa-sun"></i>;
+            default:
+                return null;
+     }
+            
+     }
+
 
     return (
+        
+        
         <div className="container">
-            <div className="header">
-                <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
-                    <img src={viteLogo} className="logo" alt="Vite logo"/>
-                </a>
-                <a href="https://react.dev" target="_blank" rel="noreferrer">
-                    <img src={reactLogo} className="logo react" alt="React logo"/>
-                </a>
-                <h1>Vite + React</h1>
-            </div>
-
-            <div className="card">
-                <button onClick={() => setCount((count) => count + 1)}>
-                    count is {count}
-                </button>
-                <p>
-                    Edit <code>src/App.jsx</code> and save to test HMR
-                </p>
-            </div>
+            <aside>
+                <div className='temperaturButton'>
+                    <i class="fa-solid fa-temperature-three-quarters"></i>
+                    <p>temperatur</p>
+                </div>
+                <div className='humidityButton'>
+                    <i class="fa-solid fa-droplet"></i>
+                    <p>humidity</p>
+                </div>
+                <div className='noiseLevelButton'>
+                    <i class="fa-solid fa-volume-high"></i>
+                    <p>noise level</p>
+                </div >
+                <div className='lightIntensityButton'>
+                    <i class="fa-solid fa-lightbulb"></i>
+                    <p>light intensity</p>
+                </div>
+            </aside>
 
             <div className="supabase-data">
-                <h2>Arduino Data</h2>
+                
                 {loading ? (
                     <p>Loading data...</p>
                 ) : (
@@ -84,6 +128,10 @@ function App() {
                             <p>No data found in the Arduino table.</p>
                         ) : (
                             <div className="data-container">
+                                           <div className='icon-container'>
+                                                {data[0] && temperaturCheck(data[0].temperature)}
+                                           </div>
+
                                 {data.map((item, index) => (
                                     <div key={item.id || index} className="data-item">
                                         {Object.entries(item)
@@ -91,7 +139,7 @@ function App() {
                                             .map(([key, value]) => (
                                                 <div key={key} className="data-property">
                                                     {key.includes('time') || key.includes('date') ? (
-                                                        <span className="property-value">
+                                                        <span className="property-date">
                                                             {new Date(value).toLocaleString(undefined, {
                                                                 year: 'numeric',
                                                                 month: 'short',
@@ -102,14 +150,13 @@ function App() {
                                                         </span>
                                                     ) : (
                                                         <>
-                                                            <span className="property-name">
-                                                                {key.replace(/_/g, ' ').split(' ').map(
-                                                                    word => word.charAt(0).toUpperCase() + word.slice(1)
-                                                                ).join(' ')}: </span> {/* Added space after the colon */}
+                                                           
                                                             <span className="property-value">
                                                                 {typeof value === 'object' && value !== null
                                                                     ? 'Complex data'
-                                                                    : String(value)
+                                                                    : key.toLowerCase().includes('temp') 
+                                                                        ? `${String(value)}°C`
+                                                                        : String(value)
                                                                 }
                                                             </span>
                                                         </>
@@ -124,10 +171,9 @@ function App() {
                 )}
             </div>
 
-            <p className="read-the-docs">
-                Click on the Vite and React logos to learn more
-            </p>
+           
         </div>
+        
     )
 }
 

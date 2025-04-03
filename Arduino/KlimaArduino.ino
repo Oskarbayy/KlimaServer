@@ -109,5 +109,5 @@ void loop() {
   }
 
   // Wait before sending the next request
-  delay(10000);  // Wait 10 seconds
+  delay(600000);  // Wait 10 minutes
 }
