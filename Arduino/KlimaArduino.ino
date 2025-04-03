@@ -3,8 +3,8 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 
-const char* ssid = "iPhone";  // Replace with your WiFi network SSID
-const char* password = "1234567890";  // Replace with your WiFi password
+const char* ssid = "Linksys14214";  // Replace with your WiFi network SSID
+const char* password = "";  // Replace with your WiFi password
 const char* host = "klimaserver-production.up.railway.app"; // Replace with your API server host
 const int httpPort = 443;         // Port of the API server // https port 443
 
@@ -21,14 +21,18 @@ WiFiSSLClient client;
 
 void setup() {
   Serial.begin(9600);
-  
+  delay(1000);
+
   // Start WiFi
-  WiFi.begin(ssid, password);
-  
+  WiFi.begin(ssid);
+  delay(2000);
+
+  // Start up the DallasTemperature library
+  sensors.begin();
+
   // Wait for WiFi to connect
   int retryCount = 0;
   while (WiFi.status() != WL_CONNECTED) {
-    delay(1000);
     Serial.print(".");
     retryCount++;
     if (retryCount >= 10) {
@@ -36,6 +40,7 @@ void setup() {
       Serial.println(WiFi.status());  // Print the exact error code
       break;
     }
+    delay(1000);
   }
 
   if (WiFi.status() == WL_CONNECTED) {
@@ -43,13 +48,13 @@ void setup() {
     Serial.print("IP address: ");
     Serial.println(WiFi.localIP());
   }
-  // Start up the DallasTemperature library
-  sensors.begin();
 }
 
 
 
 void loop() {
+  sensors.requestTemperatures();
+
   // Get the temperature in Celsius
   float temperatureC = sensors.getTempCByIndex(0);
   
@@ -67,15 +72,15 @@ void loop() {
   if (client.connect(host, httpPort)) { // Connect to the API server
     // Prepare the JSON object with temperature
     StaticJsonDocument<200> doc;
-    doc["temperatureC"] = temperatureC;
-    doc["temperatureF"] = temperatureF;
+    doc["Temperature"] = temperatureC;
+    doc["Unit"] = "Celcius";
 
     // Convert the JSON object to a string
     String jsonData;
     serializeJson(doc, jsonData);
 
     // Prepare the HTTP POST request
-    client.println("POST / HTTP/1.1");  // Ensure to use the correct API endpoint path
+    client.println("POST /recieveTemperature HTTP/1.1");  // Ensure to use the correct API endpoint path
     client.println("Host: klimaserver-production.up.railway.app"); // Correct host header
     client.println("Content-Type: application/json");  // Content type for JSON data
     client.print("Content-Length: ");
