@@ -10,10 +10,25 @@ app.UseSwaggerUI(); // Serves Swagger UI at /swagger
 
 app.MapControllers();
 
-app.MapGet("/getCurrentTemperature", () =>
+app.MapGet("/getCurrentTemperature", () => new
 {
-    return "API is running";
+    temperature = 22.5,
+    unit = "Celsius",
+    time = DateTime.UtcNow
 });
+
+app.MapPost("/recieveTemperature", (Models.TemperatureInput input) =>
+{
+    Console.WriteLine($"Received: {input.Temperature} {input.Unit}");
+
+    return Results.Ok(new
+    {
+        status = "success",
+        received = input
+    });
+});
+
+
 
 // Get the port from the environment variable "PORT".
 var port = Environment.GetEnvironmentVariable("PORT")
