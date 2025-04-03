@@ -1,6 +1,7 @@
 using Data;
 using Microsoft.EntityFrameworkCore;
 using Models;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,8 +17,24 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 
 builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer(); // Required for minimal APIs
-builder.Services.AddSwaggerGen();           // Registers Swagger generator
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+// Get connection string from configuration or environment variable as fallback
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+if (string.IsNullOrEmpty(connectionString))
+{
+    // Fallback to environment variable if not in appsettings
+    connectionString = Environment.GetEnvironmentVariable("DATABASE_URL");
+    if (string.IsNullOrEmpty(connectionString))
+    {
+        throw new Exception("Database connection string not found in configuration or environment variables.");
+    }
+}
+
+// Add database context
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseNpgsql(connectionString));
 
 var app = builder.Build();
 TemperatureInput? curTemperatureFromArduino = null;
