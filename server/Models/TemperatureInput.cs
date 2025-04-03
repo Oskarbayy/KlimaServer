@@ -1,5 +1,8 @@
-public class TemperatureInput
+namespace Models
 {
-    public string DeviceId { get; set; }
-    public float Value { get; set; }
+    public class TemperatureInput
+    {
+        public double Temperature { get; set; }
+        public string Unit { get; set; }
+    }
 }
