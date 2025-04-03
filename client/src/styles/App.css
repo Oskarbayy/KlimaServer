@@ -5,38 +5,122 @@
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+* {
+  color: white;
+  border-radius: 16px;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+i{
+  font-size: 10rem;
+  color: white;
+  padding: 30px;
+}
+
+.fa-sun{
+  font-size: 10rem;
+  color: yellow;
+  padding: 30px;
+}
+.fa-snowflake{
+  font-size: 10rem;
+  color: lightskyblue; 
+  padding: 30px;
+}
+
+body{
+  background-color: #0B131E;
+}
+
+.data-container{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 220px;
+  min-width: 220px;
+  gap: 50px;
+}
+.icon-container{
+  background-color: #202B3B;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.data-item {
+  background-color: #202B3B;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;  /* Changed to flex-start to keep content at top */
+  align-items: center;
+  min-height: 220px;
+  min-width: 220px;
+  padding: 20px;
+  position: relative;  /* Added for absolute positioning of date */
+}
+
+.property-value, .property-name {
+  justify-self: center;
+  font-size: 3.5rem;
+  font-weight: bold;
+}
+
+
+.property-date {
+    font-size: 1.5rem;
+    color: #A0A0A0;
+    position: absolute;  /* Position absolutely within data-item */
+    bottom: 20px;       /* Distance from bottom */
+    transform: translateX(-50%); /* Centering trick */
   }
-  to {
-    transform: rotate(360deg);
+
+  aside {
+    background-color: #202B3B;
+    height: 100%;
+    width: 250px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    font-size: 1.5rem;
   }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+  aside p {
+    padding: 0 0 0 0;
+    text-align: right;
   }
-}
+  aside i {
+    font-size: 2.5rem;
+    color: white;
+  }
+  .temperaturButton{
+    display: flex;
+    background-color: #1a2432;
+    align-items: center;
+    gap: 2rem;
+    margin-bottom: 10px;
+  }
+  .humidityButton{
+    display: flex;
+    background-color: #1a2432;
+    align-items: center;
+    gap: 2rem;
+    margin-bottom: 10px;
+  }
+  .noiseLevelButton{
+    display: flex;
+    background-color: #1a2432;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 10px;
+  }
+  .lightIntensityButton{
+    display: flex;
+    background-color: #1a2432;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 10px;
+  }
+ 
 
-.card {
-  padding: 2em;
-}
 
-.read-the-docs {
-  color: #888;
-}
+
+
+
+
