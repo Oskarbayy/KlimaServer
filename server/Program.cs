@@ -1,7 +1,6 @@
-using Data;
-using Microsoft.EntityFrameworkCore;
 using Models;
 using Microsoft.EntityFrameworkCore;
+using Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +20,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Get connection string from configuration or environment variable as fallback
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 if (string.IsNullOrEmpty(connectionString))
 {
     // Fallback to environment variable if not in appsettings
@@ -60,25 +58,15 @@ app.MapGet("/getCurrentTemperature", () =>
 });
 
 
-<<<<<<< HEAD
 app.MapPost("/recieveTemperature", (TemperatureInput input) =>
-=======
-app.MapPost("/recieveTemperature", async (TemperatureInput input, AppDbContext db) =>
->>>>>>> test_database_osha
 {
-    var entry = new TemperatureEntry
-    {
-        temperature = input.Temperature,
-        unit = input.Unit
-    };
-
-    await db.TemperatureEntries.AddAsync(entry);
-    await db.SaveChangesAsync();
+    Console.WriteLine($"Received: {input.Temperature} {input.Unit}");
+    curTemperatureFromArduino = input;
 
     return Results.Ok(new
     {
         status = "success",
-        saved = entry
+        received = input
     });
 });
 
