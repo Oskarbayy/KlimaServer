@@ -8,7 +8,7 @@ namespace Helpers
         public static string GetConnectionString(IConfiguration config)
         {
             var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
-            Console.WriteLine("databaseURL:", databaseUrl);
+            Console.WriteLine($"DATABASE_URL: {databaseUrl}");
 
             if (!string.IsNullOrWhiteSpace(databaseUrl) &&
                 (databaseUrl.StartsWith("postgres://") || databaseUrl.StartsWith("postgresql://")))
