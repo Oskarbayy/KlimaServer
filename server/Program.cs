@@ -28,8 +28,6 @@ builder.Services.AddCors(options =>
 app.UseCors("AllowAll");
 
 
-
-
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
