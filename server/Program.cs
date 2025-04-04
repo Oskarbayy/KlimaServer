@@ -24,10 +24,6 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Og så anvend politikken:
-app.UseCors("AllowAll");
-
-
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -44,7 +40,7 @@ catch (Exception ex)
     throw;
 }
 
-
+app.UseCors("AllowAll");
 
 TemperatureInput? curTemperatureFromArduino = null;
 
