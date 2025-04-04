@@ -1,14 +1,13 @@
 using Models;
 using Microsoft.EntityFrameworkCore;
 using Data;
+using Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Setup database
-// Get connection string from Railway (replace this with your actual one)
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? Environment.GetEnvironmentVariable("DATABASE_URL")
-    ?? throw new Exception("Connection string not set.");
+var connectionString = ConnectionHelper.GetConnectionString(builder.Configuration); // call helper function that finds connection string
+Console.WriteLine(connectionString);
 
 // Register services
 builder.Services.AddDbContext<AppDbContext>(options =>
