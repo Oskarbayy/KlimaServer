@@ -20,17 +20,6 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Get connection string from configuration or environment variable as fallback
-if (string.IsNullOrEmpty(connectionString))
-{
-    // Fallback to environment variable if not in appsettings
-    connectionString = Environment.GetEnvironmentVariable("DATABASE_URL");
-    if (string.IsNullOrEmpty(connectionString))
-    {
-        throw new Exception("Database connection string not found in configuration or environment variables.");
-    }
-}
-
 var app = builder.Build();
 TemperatureInput? curTemperatureFromArduino = null;
 
