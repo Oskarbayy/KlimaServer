@@ -45,7 +45,7 @@ export const climateAPI = {
 
   // Tilføj flere metoder efter behov
   getHumidity: async () => {
-    const data = await fetchAPI('getHumidity');
+    const data = await fetchAPI('getCurrentTemperature');
     return data.humidity;
   },
   

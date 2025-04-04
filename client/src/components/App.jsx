@@ -4,6 +4,7 @@ import '../styles/App.css';
 
 function App() {
     const [temperatureData, setTemperatureData] = useState([]);
+    const [currentTemp, setCurrentTemp] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [activeData, setActiveData] = useState('temperature');
@@ -13,8 +14,18 @@ function App() {
         async function loadTemperature() {
             try {
                 setLoading(true);
+
+                // Hent temperaturdata (liste af målinger)
                 const tempData = await climateAPI.getCurrentTemperature();
                 setTemperatureData(tempData);
+
+                // Find og sæt den aktuelle temperatur (nyeste måling)
+                if (tempData && tempData.length > 0) {
+                    const latestTemp = [...tempData].sort((a, b) =>
+                        new Date(b.timestamp) - new Date(a.timestamp)
+                    )[0];
+                    setCurrentTemp(latestTemp.temperature);
+                }
 
                 console.log('Hentet temperaturdata:', tempData);
             } catch (error) {
@@ -74,6 +85,41 @@ function App() {
 
 
         <div className="container">
+
+            <main className="content">
+                {/* Her er hvor vi vil tilføje vores JSX */}
+                <div className='data-container'>
+                    {/* Aktuel temperatur */}
+                    <div className='data-item'>
+                        {currentTemp !== null && (
+                            <h2>{currentTemp.toFixed(1)}°C</h2>
+                        )}
+                    </div>
+
+                    <div className='icon-container'>
+                        {currentTemp && temperaturCheck(currentTemp)}
+                    </div>
+
+                    {/* Temperaturhistorik */}
+                    {temperatureData.length > 0 && (
+                        <div className='temperature-history'>
+                            <h3>Temperaturhistorik</h3>
+                            {temperatureData.map(item => (
+                                <div key={item.id || item.timestamp} className="temperature-item">
+                                    <p>{item.temperature.toFixed(1)}°{item.unit || 'C'}</p>
+                                    <p className="timestamp">
+                                        {new Date(item.timestamp).toLocaleString('da-DK')}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                    {loading && <p>Indlæser data...</p>}
+                    {error && <p className="error">{error}</p>}
+                </div>
+            </main>
+
             <aside>
                 <div
                     className={`temperaturButton ${activeData === 'temperature' ? 'active' : ''}`}
@@ -90,30 +136,6 @@ function App() {
                     <p>humidity</p>
                 </div>
             </aside>
-            <div className="data-container">
-
-                <div className='data-item'>
-                    {temperatureData.length > 0 ? (
-                        <div className="temperature-data">
-                            <h2>Temperatur</h2>
-                            {temperatureData.map(item => (
-                                <div key={item.id} className="temperature-item">
-                                    <p className="temp-value">{item.temperature.toFixed(1)}°{item.unit}</p>
-                                    <p className="temp-timestamp">
-                                        {new Date(item.timestamp).toLocaleString('da-DK')}
-                                    </p>
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <p>Ingen temperaturdata tilgængelig</p>
-                    )}
-                </div>
-
-                <div className='icon-container'>
-                    {temperatureData.length > 0 && temperaturCheck(temperatureData[0].temperature)}
-                </div>
-            </div>
         </div>
 
     )
