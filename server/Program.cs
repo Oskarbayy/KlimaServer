@@ -4,6 +4,8 @@ using Data;
 using Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Logging.AddConsole();
+builder.Logging.SetMinimumLevel(LogLevel.Debug);
 
 // Setup database
 var connectionString = ConnectionHelper.GetConnectionString(builder.Configuration); // call helper function that finds connection string
@@ -28,10 +30,6 @@ if (string.IsNullOrEmpty(connectionString))
         throw new Exception("Database connection string not found in configuration or environment variables.");
     }
 }
-
-// Add database context
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(connectionString));
 
 var app = builder.Build();
 TemperatureInput? curTemperatureFromArduino = null;
@@ -83,4 +81,12 @@ var port = Environment.GetEnvironmentVariable("PORT")
 // Log the port to the console so you can see it in the deploy logs
 Console.WriteLine($"Using port: {port}");
 
-app.Run($"http://0.0.0.0:{port}");
+try
+{
+    app.Run($"http://0.0.0.0:{port}");
+}
+catch (Exception ex)
+{
+    Console.WriteLine("Fatal error on app.Run(): " + ex);
+    throw;
+}
