@@ -6,9 +6,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Setup database
 // Get connection string from Railway (replace this with your actual one)
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? Environment.GetEnvironmentVariable("DATABASE_URL")
+var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL")
+    ?? builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new Exception("Connection string not set.");
+
+Console.WriteLine(connectionString);
 
 // Register services
 builder.Services.AddDbContext<AppDbContext>(options =>
