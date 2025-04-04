@@ -8,7 +8,6 @@ namespace Helpers
         public static string GetConnectionString(IConfiguration config)
         {
             var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
-            Console.WriteLine($"DATABASE_URL: {databaseUrl}");
 
             if (!string.IsNullOrWhiteSpace(databaseUrl) &&
                 (databaseUrl.StartsWith("postgres://") || databaseUrl.StartsWith("postgresql://")))
@@ -27,7 +26,6 @@ namespace Helpers
                     TrustServerCertificate = true
                 };
 
-                Console.WriteLine($"returning builder conncetionstring {builder.ConnectionString}");
                 return builder.ConnectionString;
             }
 
