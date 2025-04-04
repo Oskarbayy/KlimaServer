@@ -13,6 +13,20 @@ Console.WriteLine(connectionString);
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", builder =>
+    {
+        builder
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
+
+// Og så anvend politikken:
+app.UseCors("AllowAll");
+
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

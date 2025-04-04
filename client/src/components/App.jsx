@@ -1,82 +1,54 @@
-import { useState, useEffect } from 'react'
-import '../styles/App.css'
-
-
-
+import { useState, useEffect } from 'react';
+import { climateAPI } from '../services/api';
+import '../styles/App.css';
 
 function App() {
-    const [currentTemp, setCurrentTemp] = useState(null)
-    // const [data, setData] = useState([])
-    // const [loading, setLoading] = useState(true)
-    // const [errorMessage, setErrorMessage] = useState('')
+    const [currentTemp, setCurrentTemp] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
-        // async function fetchData() {
-        //     try {
-        //         // Try to query the Test table directly
-        //         const { data: testData, error: testError } = await supabase
-        //             .from('arduino_data')
-        //             .select('*')
-
-        //         if (testError) {
-        //             console.error("Error querying Test table:", testError)
-        //             setErrorMessage(`Query error: ${testError.message}`)
-        //         } else {
-        //             console.log("Test table data:", testData)
-        //             setData(testData)
-        //         }
-
-               
-
-        //     } catch (error) {
-        //         console.error('Error in data operations:', error.message)
-        //         setErrorMessage(`Operation error: ${error.message}`)
-        //     } finally {
-        //         setLoading(false)
-        //     }
-        // }
-        getCurrentTemperature();
-
-
-        // // Handle the promise returned by fetchData
-        // fetchData().catch(error => {
-        //     console.error("Unhandled error in fetchData:", error);
-        //     setErrorMessage(`Unhandled error: ${error.message}`);
-        //     setLoading(false);
-        // });
-    }, [])
-
-     async function getCurrentTemperature() {
-        try{
-            const response = await fetch('https://klimaserver-production.up.railway.app/getCurrentTemperature', {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                mode: 'cors',
-        });
-           
-            if (!response.ok) {
-                throw new Error(`error: ${response.status}`);
+        async function loadTemperature() {
+            try {
+                setLoading(true);
+                const temperature = await climateAPI.getCurrentTemperature();
+                setCurrentTemp(temperature);
+                console.log('Hentet temperatur:', temperature);
+            } catch (error) {
+                console.error('Fejl ved hentning af temperatur:', error.message);
+                setError('Kunne ikke hente temperatur fra serveren');
+            } finally {
+                setLoading(false);
             }
-            const data = await response.json();
-            console.log('Fetched temperature:', data.temperature);
-            setCurrentTemp(data.temperature);
-            return data.temperature;
-        }catch(error) {
-            console.error('Error fetching temperature:', error.message);
-            return null;
         }
-     }
-     
 
-     function temperaturCheck(value) {
-        
+        loadTemperature();
+    }, []);
+
+    // Vis loading indikator mens data indlæses
+    if (loading) {
+        return (
+            <div className="container loading">
+                <p>Indlæser temperaturdata...</p>
+            </div>
+        );
+    }
+
+    // Vis fejlbesked hvis der opstod en fejl
+    if (error) {
+        return (
+            <div className="container error">
+                <p>{error}</p>
+                <button onClick={() => window.location.reload()}>Prøv igen</button>
+            </div>
+        );
+    }
+
+    function temperaturCheck(value) {
         const temp = Number(value);
         switch (true) {
             case temp <= 5:
-                return<i  className="fa-solid fa-snowflake"></i>;
+                return <i className="fa-solid fa-snowflake"></i>;
             case temp <= 10:
                 return <i className="fa-solid fa-temperature-empty"></i>
             case temp <= 15:
@@ -91,9 +63,9 @@ function App() {
                 return <i className="fa-solid fa-sun"></i>;
             default:
                 return null;
-     }
-            
-     }
+        }
+    }
+
 
 
     return (
