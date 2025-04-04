@@ -27,7 +27,7 @@ namespace Helpers
                     TrustServerCertificate = true
                 };
 
-                Console.WriteLine("returning builder conncetionstring", builder.ConnectionString);
+                Console.WriteLine($"returning builder conncetionstring {builder.ConnectionString}");
                 return builder.ConnectionString;
             }
 
