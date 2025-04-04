@@ -15,7 +15,7 @@ namespace Helpers
                 var uri = new Uri(databaseUrl);
                 var userInfo = uri.UserInfo.Split(':');
 
-                var builder = new NpgsqlConnectionStringBuilder
+                var builder = new Npgsql.NpgsqlConnectionStringBuilder
                 {
                     Host = uri.Host,
                     Port = uri.Port,
@@ -29,8 +29,12 @@ namespace Helpers
                 return builder.ConnectionString;
             }
 
-            return config.GetConnectionString("DefaultConnection")
-                ?? "Host=localhost;Port=5432;Database=localdb;Username=postgres;Password=secret";
+            var fallback = config.GetConnectionString("DefaultConnection");
+
+            if (!string.IsNullOrWhiteSpace(fallback))
+                return fallback;
+
+            throw new Exception("No valid database connection string found. Please set DATABASE_URL or configure DefaultConnection.");
         }
     }
 }
