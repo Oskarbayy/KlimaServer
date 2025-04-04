@@ -24,10 +24,12 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+WebApplication app;
+
 try
 {
     Console.WriteLine("[F] Building app");
-    var app = builder.Build();
+    app = builder.Build();
     Console.WriteLine("[G] App built");
 }
 catch (Exception ex)
@@ -35,6 +37,7 @@ catch (Exception ex)
     Console.WriteLine("[F-ERROR] Exception during app.Build(): " + ex);
     throw;
 }
+
 
 
 TemperatureInput? curTemperatureFromArduino = null;
