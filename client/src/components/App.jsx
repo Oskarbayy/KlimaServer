@@ -1,19 +1,22 @@
-import { useState, useEffect } from 'react';
-import { climateAPI } from '../services/api';
+import {useState, useEffect} from 'react';
+import {climateAPI} from '../services/api';
 import '../styles/App.css';
 
 function App() {
-    const [currentTemp, setCurrentTemp] = useState(null);
+    const [temperatureData, setTemperatureData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [activeData, setActiveData] = useState('temperature');
+
 
     useEffect(() => {
         async function loadTemperature() {
             try {
                 setLoading(true);
-                const temperature = await climateAPI.getCurrentTemperature();
-                setCurrentTemp(temperature);
-                console.log('Hentet temperatur:', temperature);
+                const tempData = await climateAPI.getCurrentTemperature();
+                setTemperatureData(tempData);
+
+                console.log('Hentet temperaturdata:', tempData);
             } catch (error) {
                 console.error('Fejl ved hentning af temperatur:', error.message);
                 setError('Kunne ikke hente temperatur fra serveren');
@@ -67,39 +70,52 @@ function App() {
     }
 
 
-
     return (
-        
-        
+
+
         <div className="container">
             <aside>
-                <div className='temperaturButton'>
+                <div
+                    className={`temperaturButton ${activeData === 'temperature' ? 'active' : ''}`}
+                    onClick={() => setActiveData('temperature')}
+                >
                     <i className="fa-solid fa-temperature-three-quarters"></i>
                     <p>temperatur</p>
                 </div>
-                <div className='humidityButton'>
+                <div
+                    className={`humidityButton ${activeData === 'humidity' ? 'active' : ''}`}
+                    onClick={() => setActiveData('humidity')}
+                >
                     <i className="fa-solid fa-droplet"></i>
                     <p>humidity</p>
                 </div>
-                <div className='noiseLevelButton'>
-                    <i className="fa-solid fa-volume-high"></i>
-                    <p>noise level</p>
-                </div >
-                <div className='lightIntensityButton'>
-                    <i className="fa-solid fa-lightbulb"></i>
-                    <p>light intensity</p>
-                </div>
             </aside>
-                 <div className="data-container">
-                 
-                 <div className='data-item'></div>
+            <div className="data-container">
 
-                 <div className='icon-container'>
-                        {currentTemp && temperaturCheck(currentTemp)}
-                 </div>
-                 </div>
+                <div className='data-item'>
+                    {temperatureData.length > 0 ? (
+                        <div className="temperature-data">
+                            <h2>Temperatur</h2>
+                            {temperatureData.map(item => (
+                                <div key={item.id} className="temperature-item">
+                                    <p className="temp-value">{item.temperature.toFixed(1)}°{item.unit}</p>
+                                    <p className="temp-timestamp">
+                                        {new Date(item.timestamp).toLocaleString('da-DK')}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <p>Ingen temperaturdata tilgængelig</p>
+                    )}
+                </div>
+
+                <div className='icon-container'>
+                    {temperatureData.length > 0 && temperaturCheck(temperatureData[0].temperature)}
+                </div>
+            </div>
         </div>
-        
+
     )
 }
 

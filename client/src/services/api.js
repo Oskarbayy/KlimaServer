@@ -40,9 +40,9 @@ async function fetchAPI(endpoint, options = {}) {
 export const climateAPI = {
   getCurrentTemperature: async () => {
     const data = await fetchAPI('temperatures');
-    return data.temperature;
+    return data; // Returnerer hele array'et, ikke kun temperature-værdien
   },
-  
+
   // Tilføj flere metoder efter behov
   getHumidity: async () => {
     const data = await fetchAPI('getHumidity');
