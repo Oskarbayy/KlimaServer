@@ -3,29 +3,38 @@ using Microsoft.EntityFrameworkCore;
 using Data;
 using Helpers;
 
+Console.WriteLine("[A] Starting application builder");
+
 var builder = WebApplication.CreateBuilder(args);
+
+Console.WriteLine("[B] Configuring logging");
 builder.Logging.AddConsole();
 builder.Logging.SetMinimumLevel(LogLevel.Debug);
 
-// Setup database
-var connectionString = ConnectionHelper.GetConnectionString(builder.Configuration); // call helper function that finds connection string
-Console.WriteLine(connectionString);
+Console.WriteLine("[C] Getting connection string");
+var connectionString = ConnectionHelper.GetConnectionString(builder.Configuration);
+Console.WriteLine($"[C1] Connection string: {connectionString}");
 
-// Register services
+Console.WriteLine("[D] Registering AppDbContext");
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
 
-
+Console.WriteLine("[E] Registering services");
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+Console.WriteLine("[F] Building app");
 var app = builder.Build();
+Console.WriteLine("[G] App built");
+
 TemperatureInput? curTemperatureFromArduino = null;
 
+Console.WriteLine("[H] Setting up Swagger");
 app.UseSwagger();   // Generates /swagger/v1/swagger.json
 app.UseSwaggerUI(); // Serves Swagger UI at /swaggers
 
+Console.WriteLine("[I] Mapping controllers and endpoints");
 app.MapControllers();
 
 app.MapGet("/getCurrentTemperature", () =>
@@ -43,10 +52,9 @@ app.MapGet("/getCurrentTemperature", () =>
     });
 });
 
-
 app.MapPost("/recieveTemperature", (TemperatureInput input) =>
 {
-    Console.WriteLine($"Received: {input.Temperature} {input.Unit}");
+    Console.WriteLine($"[J] Received: {input.Temperature} {input.Unit}");
     curTemperatureFromArduino = input;
 
     return Results.Ok(new
@@ -56,26 +64,26 @@ app.MapPost("/recieveTemperature", (TemperatureInput input) =>
     });
 });
 
-
 app.MapGet("/temperatures", async (AppDbContext db) =>
 {
+    Console.WriteLine("[K] Fetching all temperature entries from DB");
     var allEntries = await db.TemperatureEntries.ToListAsync();
     return Results.Ok(allEntries);
 });
 
-// Get the port from the environment variable "PORT".
+Console.WriteLine("[L] Getting PORT env variable");
 var port = Environment.GetEnvironmentVariable("PORT")
            ?? throw new Exception("PORT environment variable not set.");
 
-// Log the port to the console so you can see it in the deploy logs
-Console.WriteLine($"Using port: {port}");
+Console.WriteLine($"[M] Using port: {port}");
 
+Console.WriteLine("[N] Running app");
 try
 {
     app.Run($"http://0.0.0.0:{port}");
 }
 catch (Exception ex)
 {
-    Console.WriteLine("Fatal error on app.Run(): " + ex);
+    Console.WriteLine("[Z] Fatal error on app.Run(): " + ex);
     throw;
 }
