@@ -66,8 +66,9 @@ app.MapGet("/getCurrentTemperature", () =>
     });
 });
 
-app.MapPost("/recieveTemperature", async (TemperatureInput input, AppDbContext db) =>
+app.MapPost("/receiveTemperature", async (TemperatureInput input, AppDbContext db) =>
 {
+    Console.WriteLine($"Received temperature {input.Value}°C from {input.DeviceId} at {input.Location}");
     var arduino = await db.Arduinos
         .FirstOrDefaultAsync(a => a.Location == input.Location && a.DeviceId == input.DeviceId);
 
