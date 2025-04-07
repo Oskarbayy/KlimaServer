@@ -1,5 +1,8 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Models
 {
+    [Table("arduinos")]
     public class Arduino
     {
         public int Id { get; set; }

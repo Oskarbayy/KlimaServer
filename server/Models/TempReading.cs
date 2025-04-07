@@ -1,5 +1,8 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Models
 {
+    [Table("temp")]
     public class TempReading
     {
         public int Id { get; set; }
