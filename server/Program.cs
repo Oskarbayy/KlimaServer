@@ -105,7 +105,7 @@ app.MapPost("/receiveTemperature", async (TemperatureInput input, AppDbContext d
 
 app.MapGet("/temperatures", async (AppDbContext db) =>
 {
-    var allEntries = await db.TemperatureEntries.ToListAsync();
+    var allEntries = await db.Temp.ToListAsync();
     return Results.Ok(allEntries);
 });
 
