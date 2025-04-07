@@ -1,4 +1,3 @@
-#include <Arduino.h>
 #include <WiFiS3.h>      // Include WiFi library (WiFiS3 for R4)
 #include <ArduinoJson.h> // Include ArduinoJson library for JSON handling
 #include <OneWire.h>
@@ -8,6 +7,8 @@ const char *ssid = "Linksys14214";                          // Replace with your
 const char *password = "";                                  // Replace with your WiFi password
 const char *host = "klimaserver-production.up.railway.app"; // Replace with your API server host
 const int httpPort = 443;                                   // Port of the API server // https port 443
+const char *location = "ZBC-Ringsted-D17";
+const char *device_id = "arduino-001";
 
 // Pin where the DS18B20 data line is connected
 #define ONE_WIRE_BUS 2 // Digital Pin 2 for DS18B20
@@ -22,7 +23,6 @@ WiFiSSLClient client;
 
 void setup()
 {
-  Serial.print("JDSJFD");
   Serial.begin(9600);
   delay(1000);
 
@@ -78,15 +78,16 @@ void loop()
   { // Connect to the API server
     // Prepare the JSON object with temperature
     StaticJsonDocument<200> doc;
-    doc["Temperature"] = temperatureC;
-    doc["Unit"] = "Celcius";
+    doc["value"] = temperatureC;
+    doc["location"] = location;
+    doc["deviceId"] = device_id;
 
     // Convert the JSON object to a string
     String jsonData;
     serializeJson(doc, jsonData);
 
     // Prepare the HTTP POST request
-    client.println("POST /recieveTemperature HTTP/1.1");           // Ensure to use the correct API endpoint path
+    client.println("POST /receiveTemperature HTTP/1.1");           // Ensure to use the correct API endpoint path
     client.println("Host: klimaserver-production.up.railway.app"); // Correct host header
     client.println("Content-Type: application/json");              // Content type for JSON data
     client.print("Content-Length: ");
