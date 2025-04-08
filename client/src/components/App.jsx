@@ -37,7 +37,7 @@ function App() {
         }
 
         loadTemperature();
-        const interval = setInterval(loadTemperature, 60000); // Opdater hvert minut
+        const interval = setInterval(loadTemperature, 600000); // Opdater hvert minut
         return () => clearInterval(interval); // Ryd op ved unmount
 
     }, []);
@@ -102,6 +102,9 @@ function App() {
                         {currentTemp !== null && (
                             <h2>{currentTemp.toFixed(2)}°C</h2>
                         )}
+                    </div>
+                    <div className='temperatureDate-container'>
+                        <p>placholder</p>
                     </div>
 
                     
