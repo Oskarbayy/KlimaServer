@@ -24,7 +24,7 @@ function App() {
                     const latestTemp = [...tempData].sort((a, b) =>
                         new Date(b.timestamp) - new Date(a.timestamp)
                     )[0];
-                    setCurrentTemp(latestTemp.temperature);
+                    setCurrentTemp(latestTemp.value);
                 }
 
                 console.log('Hentet temperaturdata:', tempData);
@@ -37,6 +37,9 @@ function App() {
         }
 
         loadTemperature();
+        const interval = setInterval(loadTemperature, 60000); // Opdater hvert minut
+        return () => clearInterval(interval); // Ryd op ved unmount
+
     }, []);
 
     // Vis loading indikator mens data indlæses
@@ -61,19 +64,19 @@ function App() {
     function temperaturCheck(value) {
         const temp = Number(value);
         switch (true) {
-            case temp <= 5:
+            case temp <= 0:
                 return <i className="fa-solid fa-snowflake"></i>;
-            case temp <= 10:
+            case temp <= 5:
                 return <i className="fa-solid fa-temperature-empty"></i>
-            case temp <= 15:
+            case temp <= 10:
                 return <i className="fa-solid fa-temperature-quarter"></i>
-            case temp <= 20:
+            case temp <= 15:
                 return <i className="fa-solid fa-temperature-half"></i>
-            case temp <= 25:
+            case temp <= 20:
                 return <i className="fa-solid fa-temperature-three-quarters"></i>
-            case temp <= 30:
+            case temp <= 25:
                 return <i className="fa-solid fa-temperature-full"></i>
-            case temp <= 35:
+            case temp <= 30:
                 return <i className="fa-solid fa-sun"></i>;
             default:
                 return null;
@@ -89,16 +92,19 @@ function App() {
             <main className="content">
                 {/* Her er hvor vi vil tilføje vores JSX */}
                 <div className='data-container'>
-                    {/* Aktuel temperatur */}
-                    <div className='data-item'>
-                        {currentTemp !== null && (
-                            <h2>{currentTemp.toFixed(1)}°C</h2>
-                        )}
-                    </div>
-
+                    
                     <div className='icon-container'>
                         {currentTemp && temperaturCheck(currentTemp)}
                     </div>
+
+                    {/* Aktuel temperatur */}
+                    <div className='data-item'>
+                        {currentTemp !== null && (
+                            <h2>{currentTemp.toFixed(2)}°C</h2>
+                        )}
+                    </div>
+
+                    
 
                     {/* Temperaturhistorik */}
                     {temperatureData.length > 0 && (
@@ -106,7 +112,7 @@ function App() {
                             <h3>Temperaturhistorik</h3>
                             {temperatureData.map(item => (
                                 <div key={item.id || item.timestamp} className="temperature-item">
-                                    <p>{item.temperature.toFixed(1)}°{item.unit || 'C'}</p>
+                                    <p>{item.value.toFixed(1)}°{item.unit || 'C'}</p>
                                     <p className="timestamp">
                                         {new Date(item.timestamp).toLocaleString('da-DK')}
                                     </p>
