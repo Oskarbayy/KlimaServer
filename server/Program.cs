@@ -71,6 +71,12 @@ app.MapPost("/receiveTemperature", async (TemperatureInput input, AppDbContext d
     Console.WriteLine($"Received temperature {input.Value}°C from {input.DeviceId} at {input.Location}");
     curTemperatureFromArduino = input;
 
+    var cutoff = DateTime.UtcNow.AddDays(-7);
+    var oldReadings = db.Temp.Where(t => t.Timestamp < cutoff);
+    db.Temp.RemoveRange(oldReadings);
+    await db.SaveChangesAsync();
+
+
     var arduino = await db.Arduinos
         .FirstOrDefaultAsync(a => a.Location == input.Location && a.DeviceId == input.DeviceId);
 
