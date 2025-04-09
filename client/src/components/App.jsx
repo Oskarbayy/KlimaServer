@@ -19,6 +19,7 @@ function App() {
                 const tempData = await climateAPI.getCurrentTemperature();
                 setTemperatureData(tempData);
 
+
                 // Find og sæt den aktuelle temperatur (nyeste måling)
                 if (tempData && tempData.length > 0) {
                     const latestTemp = [...tempData].sort((a, b) =>
@@ -104,7 +105,28 @@ function App() {
                         )}
                     </div>
                     <div className='temperatureDate-container'>
-                        <p>placholder</p>
+                        <h1>Week</h1>
+                        <div className='TempMonday'>
+                            <h2>Mandag</h2>
+                        </div>
+                        <div className='TempTuesday'>
+                            <h2>Tuesday</h2>
+                        </div>
+                        <div className='TempWednesday'>
+                            <h2>Wednesday</h2>
+                        </div>
+                        <div className='TempThursday'>
+                            <h2>Torsdag</h2>
+                        </div>
+                        <div className='TempFriday'>
+                            <h2>Friday</h2>
+                        </div>
+                        <div className='TempSaturday'>
+                            <h2>Saturday</h2>
+                        </div>
+                        <div className='TempSunday'>
+                            <h2>Sunday</h2>
+                        </div> 
                     </div>
 
                     
